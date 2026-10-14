@@ -42,6 +42,7 @@ jobs:
       - name: Match playlist channel ID
         run: |
           python3 - <<'PY'
+          import re
           import xml.etree.ElementTree as ET
 
           tree = ET.parse("epg-tools/guide.xml")
@@ -67,6 +68,9 @@ jobs:
                   root.remove(programme)
               else:
                   programme.set("channel", "373490")
+                  for title in programme.findall("title"):
+                      if title.get("lang") not in ("en", "eng"):
+                         programme.remove(title)
 
           tree.write(
               "epg.xml",
